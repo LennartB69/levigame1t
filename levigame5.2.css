@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+}
+
+#game-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#click-button {
+    cursor: pointer;
+    width: 150px;
+    height: 150px;
+}
+
+#upgrades-container, #power-ups-container, #leaderboard-container, #achievements-container, #daily-reward-container, #prestige-shop-container, #timed-bonus-container, #daily-quest-container {
+    margin-top: 25px;
+}
+
+button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    background-color: transparent; /* Remove gray background */
+}
+
+.upgrade-item {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+}
+
+.upgrade-button-img {
+    width: 100px; /* Set your desired width */
+    height: 100px; /* Set your desired height */
+}
+
+.upgrade-info {
+    position: relative; /* Allow positioning within this container */
+    margin-top: -2px; /* Adjust this value to position the price above the image */
+    z-index: 1; /* Keep the text above the image */
+}
+
+.upgrade-item .tooltip {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%; /* Position the tooltip above the button */
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.upgrade-item:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
