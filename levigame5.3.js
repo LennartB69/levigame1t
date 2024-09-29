@@ -3,10 +3,6 @@ let score = 0;
 let clickPower = 1;
 let multiplier = 1;
 let gems = 0;
-let autoClicker1Active = false;
-let autoClicker2Active = false;
-let autoClicker1Level = 1;
-let autoClicker2Level = 1;
 let highScores = [];
 let achievements = [];
 let lastClaimedDailyReward = 0;
@@ -18,10 +14,27 @@ const buySound = document.getElementById('buySound');
 const questCompleteSound = document.getElementById('questCompleteSound');
 const bonusSound = document.getElementById('bonusSound');
 
+// Auto Clicker Objects
+const autoClicker1 = {
+    active: false,
+    level: 1,
+    price: 50,
+    getAutoClicks: function() {
+        return this.level;
+    }
+};
+
+const autoClicker2 = {
+    active: false,
+    level: 1,
+    price: 150,
+    getAutoClicks: function() {
+        return this.level * 2;
+    }
+};
+
 // Upgrade Prices
 let upgradeClickPowerPrice = 10;
-let autoClicker1Price = 50;
-let autoClicker2Price = 150;
 const autoClickerPriceMultiplier = 1.5;
 
 // Function to update the score display
@@ -32,32 +45,34 @@ function updateScore() {
 
 // Function to update auto clicks per second display
 function updateAutoClicksDisplay() {
-    let autoClicksPerSecond = autoClicker1Level + (autoClicker2Level * 2);
+    let autoClicksPerSecond = autoClicker1.getAutoClicks() + autoClicker2.getAutoClicks();
     document.getElementById('auto-clicks-display').innerText = `Auto Clicks per Second: ${autoClicksPerSecond}`;
 }
 
 // Purchase function for auto-clickers
-function purchaseAutoClicker(autoClickerPrice, autoClickerLevel, autoClickerActiveFlag) {
-    if (score >= autoClickerPrice) {
-        score -= autoClickerPrice;
-        autoClickerActiveFlag = true;
-        autoClickerLevel++;
-        autoClickerPrice = Math.floor(autoClickerPrice * autoClickerPriceMultiplier);
+function purchaseAutoClicker(autoClicker) {
+    if (score >= autoClicker.price) {
+        score -= autoClicker.price;
+        autoClicker.active = true;
+        autoClicker.level++;
+        autoClicker.price = Math.floor(autoClicker.price * autoClickerPriceMultiplier);
         updateScore();
         updatePrices();
         updateUpgrades();
         updateAutoClicksDisplay();
         buySound.play();
+    } else {
+        alert("Not enough score to purchase!");
     }
 }
 
 // Event listeners for auto-clickers
 document.getElementById('auto-clicker-1').onclick = function() {
-    purchaseAutoClicker(autoClicker1Price, autoClicker1Level, autoClicker1Active);
+    purchaseAutoClicker(autoClicker1);
 };
 
 document.getElementById('auto-clicker-2').onclick = function() {
-    purchaseAutoClicker(autoClicker2Price, autoClicker2Level, autoClicker2Active);
+    purchaseAutoClicker(autoClicker2);
 };
 
 // Function to update gems display
@@ -75,14 +90,14 @@ function updateClickPower() {
 // Function to update prices on the buttons
 function updatePrices() {
     document.getElementById('upgrade-click-power-price').innerText = `Price: ${upgradeClickPowerPrice}`;
-    document.getElementById('auto-clicker-1-price').innerText = `Price: ${autoClicker1Price}`;
-    document.getElementById('auto-clicker-2-price').innerText = `Price: ${autoClicker2Price}`;
+    document.getElementById('auto-clicker-1-price').innerText = `Price: ${autoClicker1.price}`;
+    document.getElementById('auto-clicker-2-price').innerText = `Price: ${autoClicker2.price}`;
 }
 
 // Function to update upgrade levels
 function updateUpgrades() {
-    document.getElementById('auto-clicker-1-level').innerText = `Level: ${autoClicker1Level}`;
-    document.getElementById('auto-clicker-2-level').innerText = `Level: ${autoClicker2Level}`;
+    document.getElementById('auto-clicker-1-level').innerText = `Level: ${autoClicker1.level}`;
+    document.getElementById('auto-clicker-2-level').innerText = `Level: ${autoClicker2.level}`;
 }
 
 // Function for click event
@@ -102,20 +117,22 @@ document.getElementById('upgrade-click-power').onclick = function() {
         updatePrices();
         updateClickPower();
         buySound.play();
+    } else {
+        alert("Not enough score to upgrade click power!");
     }
 };
 
 // Auto clicker functionality
 setInterval(function() {
-    if (autoClicker1Active) {
-        score += autoClicker1Level;
+    if (autoClicker1.active) {
+        score += autoClicker1.getAutoClicks();
         updateScore();
     }
 }, 1000);
 
 setInterval(function() {
-    if (autoClicker2Active) {
-        score += autoClicker2Level;
+    if (autoClicker2.active) {
+        score += autoClicker2.getAutoClicks();
         updateScore();
     }
 }, 500);
@@ -138,8 +155,10 @@ function initializeGame() {
     score = parseInt(localStorage.getItem('score')) || 0;
     gems = parseInt(localStorage.getItem('gems')) || 0;
     clickPower = parseInt(localStorage.getItem('clickPower')) || 1;
-    autoClicker1Level = parseInt(localStorage.getItem('autoClicker1Level')) || 1;
-    autoClicker2Level = parseInt(localStorage.getItem('autoClicker2Level')) || 1;
+    autoClicker1.level = parseInt(localStorage.getItem('autoClicker1Level')) || 1;
+    autoClicker2.level = parseInt(localStorage.getItem('autoClicker2Level')) || 1;
+    autoClicker1.price = parseInt(localStorage.getItem('autoClicker1Price')) || 50;
+    autoClicker2.price = parseInt(localStorage.getItem('autoClicker2Price')) || 150;
     lastClaimedDailyReward = parseInt(localStorage.getItem('lastClaimedDailyReward')) || 0;
 
     updateScore();
